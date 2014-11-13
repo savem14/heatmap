@@ -12,23 +12,25 @@ use warnings ;
 #
 #
 #
-my $infile = "..\som_mouse_GO_enrichments_expanded_biologcal_clean" ;
-my $output = "..\output" ;
+my $infile = "c:/Users/Evan/Documents/GitHub/heatmap/Files/Input/som_mouse_GO_enrichments_expanded_biologcal_clean.csv" ;
+my $output = "c:/Users/Evan/Documents/GitHub/heatmap/Files/Output/output.txt" ;
 my @matrix = readfile($infile) ;
-my %distance = looper(@matrix) ;
+my @distance = looper(@matrix) ;
+print "@distance\n" ;
 #
 #
 sub readfile {
 	# reading in parameters passed to this function and creating necessary variables
-	my (@matrix, $som, @temp, $infile) 
+	my (@matrix, $som, @temp, $infile,$i) ;
 	($infile) = @_;
+	$i = -1 ;
 	#
 	# Initializing AoA
 	@matrix = () ;
 	#
 	open (INPUT,"<", $infile) 
 		or die "Unable to open $infile: $!\n" ;
-	while <INPUT> {
+	while (<INPUT>) {
 		chomp;
 		@temp = split(",",$_) ;
 		#
@@ -39,38 +41,41 @@ sub readfile {
 			#
 		}
 		# if not som, pushing to AoA
-		else {
+		elsif ($temp[0] !~ /p-value/) {
+			$i ++ ;
 			# adding in SOM label for each SOM node
 			push (@temp, $som) ;
 			# pushing line to AoA - !!!!NOT SURE IF THIS IS CORRECT SYNTAX!!!!
 			push (@{$matrix[$i]}, @temp) ;
 		}
 	# returning the completed AoA through levenshtein sub after processing each line
+	}
 	return @matrix ;
 }
 # THIS IS WHERE I AM MAINLY CONFUSED - looping through @matrix AoA and passing i and j through levenshtein
 sub looper {
 	# reading in parameters passed to function and creating our variables
-	my ($i, $j, @matrix, %distance) ;
+	my ($i, $j, @cur_distance,@distance, @matrix) ;
 	(@matrix) = @_ ;
 	#
 	# Initializing distance hash array
-	%distance = () ;
+	@cur_distance = () ;
 	#
 	# Looping through our array, passing i vs j to levenshtein
 	# and pushing distances to distance array
 	#
-	for $i(0..$#{$matrix[0}) {
-		for $j(0..$#{$matrix[0]0}) {
+	for $i(0..$#{$matrix[0]}) {
+		for $j(0..$#{$matrix[0]}) {
 			#
 			# want to keep track of the optimal distances for each query
 			# so pushing to %distance hash array (not sure how to operate on hash)
 			#
-			push %distance, (&levenshtein($matrix[$i][3], $matrix[$j][3])) ;
-			print "the distance between $matrix[$i][3], $matrix[$j][3] is: $distance/n" ;
+			push @cur_distance, (&levenshtein($matrix[$i][2], $matrix[$j][2])) ;
+			#print "the distance between $matrix[$i][2], $matrix[$j][2] is: @cur_distance\n" ;
 		}
+	push @distance,(@cur_distance) ;
 	}
-	return %distance
+return @distance ;
 }
 	#
 	#
