@@ -1,5 +1,6 @@
 use strict;
-use warnings ;
+use Data::Dumper qw(Dumper);
+#use warnings ;
 #use List::Util 'min';
 #
 # Institution: The University of Memphis
@@ -15,7 +16,10 @@ use warnings ;
 my $infile = "c:/Users/Evan/Documents/GitHub/heatmap/Files/Input/som_mouse_GO_enrichments_expanded_biologcal_clean.csv" ;
 my $output = "c:/Users/Evan/Documents/GitHub/heatmap/Files/Output/output.txt" ;
 my @matrix = readfile($infile) ;
+#
 my @distance = looper(@matrix) ;
+print Dumper \@distance;
+#
 print "@distance\n" ;
 #
 #
@@ -45,33 +49,42 @@ sub readfile {
 			$i ++ ;
 			# adding in SOM label for each SOM node
 			push (@temp, $som) ;
-			# pushing line to AoA - !!!!NOT SURE IF THIS IS CORRECT SYNTAX!!!!
+			# pushing temp matrix to AoA 
 			push (@{$matrix[$i]}, @temp) ;
 		}
 	# returning the completed AoA through levenshtein sub after processing each line
 	}
 	return @matrix ;
 }
-# THIS IS WHERE I AM MAINLY CONFUSED - looping through @matrix AoA and passing i and j through levenshtein
+#
+# The looper sub passes all of the elements from a given array through the levenshtein sub, then creates 
+# another array with only the significant distances 
+#
+#
 sub looper {
 	# reading in parameters passed to function and creating our variables
-	my ($i, $j, @cur_distance,@distance, @matrix) ;
+	my ($i, $j, $leve, @cur_distance,@distance, @matrix) ;
+	# passing our input into AoA
 	(@matrix) = @_ ;
-	#
-	# Initializing distance hash array
-	@cur_distance = () ;
-	#
 	# Looping through our array, passing i vs j to levenshtein
 	# and pushing distances to distance array
-	#
-	for $i(0..$#{$matrix[0]}) {
-		for $j(0..$#{$matrix[0]}) {
+	for $i(0..$#matrix) {
+		for $j(1..$#matrix) {
 			#
-			# want to keep track of the optimal distances for each query
-			# so pushing to %distance hash array (not sure how to operate on hash)
+			# want to keep track of the optimal distances for each query, and only keep our distances
+			# that are above a certain threshold....we may need to make an additional metric so this 
 			#
-			push @cur_distance, (&levenshtein($matrix[$i][2], $matrix[$j][2])) ;
-			#print "the distance between $matrix[$i][2], $matrix[$j][2] is: @cur_distance\n" ;
+			# setting threshold to 10 for now, we should probably calculate a metric for this later on
+			#
+			#$count += 1 ;
+			#print "comparison #: $count\n the two strings being compared are:$matrix[$i][2],$matrix[$j][2]\n" ;
+			$leve = &levenshtein($matrix[$i][2], $matrix[$j][2]) ;
+			if ($leve  <= 10) {
+				# may only need to be pushing the levenshtein value
+				#print "looking at: $matrix[$i], $matrix[$j]\n" ;
+				push @cur_distance, (($matrix[$i]),($matrix[$j]), $leve) ;
+				print "the distance between $matrix[$i] and $matrix[$j] is: $leve\n" ;
+			}
 		}
 	push @distance,(@cur_distance) ;
 	}
