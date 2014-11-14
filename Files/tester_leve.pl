@@ -16,11 +16,16 @@ use Data::Dumper qw(Dumper);
 my $infile = "c:/Users/Evan/Documents/GitHub/heatmap/Files/Input/som_mouse_GO_enrichments_expanded_biologcal_clean.csv" ;
 my $output = "c:/Users/Evan/Documents/GitHub/heatmap/Files/Output/output.txt" ;
 my @matrix = readfile($infile) ;
+my $len_matrix = length(@matrix) ;
+#
+# Debugging matrix to make sure AoA has all of the lines we want
+#
+for my $aref (@matrix) {
+	print "\t [@$aref],\n" ;
+}
 #
 my @distance = looper(@matrix) ;
-print Dumper \@distance;
 #
-print "@distance\n" ;
 #
 #
 sub readfile {
@@ -83,7 +88,7 @@ sub looper {
 				# may only need to be pushing the levenshtein value
 				#print "looking at: $matrix[$i], $matrix[$j]\n" ;
 				push @cur_distance, (($matrix[$i]),($matrix[$j]), $leve) ;
-				print "the distance between $matrix[$i] and $matrix[$j] is: $leve\n" ;
+				#print "the distance between $matrix[$i] and $matrix[$j] is: $leve\n" ;
 			}
 		}
 	push @distance,(@cur_distance) ;
