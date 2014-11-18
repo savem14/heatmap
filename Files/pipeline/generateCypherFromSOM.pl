@@ -69,18 +69,26 @@ sub buildCypherQuery {
 		my $name2   = $matrix[$i][5];
 		# check if we had a GO_ID in the name of our GOterm process.
 		my @process = split('\|', $matrix[$i][5]);
-		if( scalar(@process) > 1 ) {
-			my $name2 = @process[0];
-			my $GO_ID2 = @process[1];
+		if( (@process) > 1 ) {
+			$name2 = @process[0];
+			$GO_ID2 = @process[1];
 		}
 		# We generate cypher queries to merge our GO Terms
 		# Then we match+merge in the relationship between them.
 		my $cypherMerge1 = 'MERGE (entity:GOTERM { name: "'.$name.'", go_id: '.$GO_ID.', type: "'.$type.'"})
 ON CREATE SET entity.som = ["'.$som.'"], entity.p_value = ['.$p_value.']
 ON MATCH SET entity.som = entity.som + "'.$som.'", entity.p_value = entity.p_value + '.$p_value.';';
-		my $cypherMerge2 =  'MERGE (process:GOTERM { name: "'.$name2.'", go_id: '.$GO_ID2.'})
+		my $cypherMerge2 = "";
+		if( $GO_ID2 != -1 ) {
+			 $cypherMerge2 =  'MERGE (process:GOTERM { name: "'.$name2.'"})
+ON CREATE SET process.som = ["'.$som.'"], process.p_value = [-1], process.go_id = '.$GO_ID2.'
+ON MATCH SET process.som = process.som + "'.$som.'", process.p_value = process.p_value + -1, process.go_id = '.$GO_ID2.';';
+		}
+		else {
+			 $cypherMerge2 =  'MERGE (process:GOTERM { name: "'.$name2.'"})
 ON CREATE SET process.som = ["'.$som.'"], process.p_value = [-1]
-ON MATCH SET process.som = process.som + "'.$som.'", process.p_value = process.p_value + -1;';
+ON MATCH SET process.som = process.som + "'.$som.'", process.p_value = process.p_value + -1, process.go_id = process.go_id;';
+		}
 		my $cypherRelationship = 'MATCH (entity:GOTERM { name: "'.$name.'", type: "'.$type.'", go_id: '.$GO_ID.'}),(process:GOTERM { name: "'.$name2.'", go_id: '.$GO_ID2.'}) WHERE '.$p_value.' IN entity.p_value AND "'.$som.'" IN entity.som
 MERGE (entity)-[:IS_A{relationship_id: '.$is_a.'}]->(process);';
 		print "$cypherMerge1 \n\n $cypherMerge2 \n\n $cypherRelationship \n\n";
