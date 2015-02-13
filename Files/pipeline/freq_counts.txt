@@ -1,0 +1,20 @@
+1) regulation of cell shape has frequency 5 and index 108
+2) regulation of cell cycle has frequency 5 and index 383
+3) angiogenesis has frequency 5 and index 236
+4) Wnt receptor signaling pathway has frequency 4 and index 201
+5) neural tube closure has frequency 4 and index 498
+6) axonogenesis has frequency 4 and index 43
+7) synaptic transmission has frequency 3 and index 94
+8) RNA splicing has frequency 3 and index 470
+9) response to toxin has frequency 3 and index 26
+10) response to pheromone has frequency 3 and index 18
+11) regulation of protein phosphorylation has frequency 3 and index 371
+12) regulation of ion transmembrane transport has frequency 3 and index 120
+13) regulation of cell migration has frequency 3 and index 326
+14) positive regulation of proteasomal ubiquitin-dependent protein catabolic process has frequency 3 and index 184
+15) positive regulation of neuron differentiation has frequency 3 and index 435
+16) positive regulation of GTPase activity has frequency 3 and index 151
+17) positive regulation of gene expression has frequency 3 and index 471
+18) positive regulation of DNA binding has frequency 3 and index 354
+19) positive regulation of cell-substrate adhesion has frequency 3 and index 557
+20) positive regulation of cell cycle cytokinesis has frequency 3 and index 380

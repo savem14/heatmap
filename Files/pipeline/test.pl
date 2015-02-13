@@ -6,15 +6,16 @@ use Scalar::Util qw(looks_like_number);
 # Institution: The University of Memphis
 # Project: Mouse Cerebellum
 # Written By: Evan Savage/Ethan Willis
-# Edit Date: 1/7/2015
+# Edit Date: 1/20/2015 (last edit discovered comma error in input)
 # 
 # Description: 
-# 	This program exports SOM data files
+#
+# This program exports SOM data files
 # to the Neo4j graph database by creating
 # the associated Cypher queries.
 #
 
-my $infile = "../Input/som_mouse_GO_enrichments_expanded_biological_clean.csv";
+my $infile = "../Input/som_mouse_GO_enrichments_expanded_biological_clean_test.csv";
 my $output = "Output/neo4jSOMDataExport.cypher";
 my @matrix = readfile($infile);
 my $len_matrix = length(@matrix);
@@ -63,14 +64,17 @@ sub buildCypherQuery {
 		my $name    = $matrix[$i][2];
 		my $type    = $matrix[$i][3];
 		# Fine up till here, breaking apart our associated terms into 			new array
-		my @is_a_array = split('|', $matrix[$i][4]);
-		my $is_a = $matrix[$i][5] ;
+		my @process = split('\|', $matrix[$i][4]);
+		my $is_a = "11111";
+		#my $is_a = 12345 ;
+		#print "the value for go_id $GO_ID is_a is: $is_a\n" ;
 		my $som = $matrix[$i][$#{$matrix[$i]}];
 		# iterating through our is_a associated terms and building 			# our nodes for each term
-		foreach my $term (@is_a_array) {
-			my @temp   = split(";", $term) ;
+		foreach my $process (@process) {
+			my @temp   = split(";", $process) ;
 			my $GO_ID2 = $temp[0] ;
 			my $name2  = $temp[1] ;
+			#print "my GO_ID1 is $GO_ID and GO_ID2 is $GO_ID2 \n" ;
 			# We generate cypher queries to merge our GO Terms
 			# Then we match+merge in the relationship between them.
 			my $cypherMerge1 = 'MERGE (entity:GOTERM { name: "'.$name.'", go_id: '.$GO_ID.', type: "'.$type.'"})
